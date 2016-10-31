@@ -27,6 +27,17 @@ test('AWS.mock function should mock AWS service and method on the service', func
       st.end();
     })
   })
+  t.test('mock function replaces method with replace function with lambda', function(st){
+    awsMock.mock('Lambda', 'invoke', function(params, callback){
+      callback("error", null);
+    });
+    var lambda = new AWS.Lambda();
+    lambda.invoke({}, function(err, data){
+      st.equals(err, 'message');
+      awsMock.restore('Lambda');
+      st.end();
+    })
+  })
   t.test('method which accepts any number of arguments can be mocked', function(st) {
     awsMock.mock('S3', 'getSignedUrl', 'message');
     var s3 = new AWS.S3();
